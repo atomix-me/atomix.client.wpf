@@ -12,12 +12,17 @@ clone_script:
   - cmd: git clone -q --recursive --branch=%APPVEYOR_REPO_BRANCH% https://github.com/%APPVEYOR_REPO_NAME%.git %APPVEYOR_BUILD_FOLDER%
   - cmd: git checkout -qf %APPVEYOR_REPO_COMMIT%
 
+before_build:
+  - ps: New-SelfSignedCertificate -DnsName atomix.me -Type CodeSigning -CertStoreLocation cert:\LocalMachine\My
+
 build_script:
   - dotnet restore
   - nuget restore
   - msbuild /p:Configuration="Release"  /clp:ErrorsOnly'
   - msbuild .\Atomix.Client.Wpf.Installer\Atomix.Client.Wpf.Installer.wixproj /p:Configuration="Release" /clp:ErrorsOnly'
-  - ps: Set-AuthenticodeSignature -FilePath .\Atomix.Client.Wpf.Installer\bin\Release\Atomix.Wallet.msi -Certificate (New-SelfSignedCertificate -Subject "Atomix.me” -Type CodeSigningCert -CertStoreLocation cert:\LocalMachine\My)
+
+after_build:
+  - ps: Set-AuthenticodeSignature -FilePath .\Atomix.Client.Wpf.Installer\bin\Release\Atomix.Wallet.msi -Certificate @(gci Cert:\LocalMachine\My -DnsName atomix.me -codesigning)[0]
 
 artifacts:
   - path: .\Atomix.Client.Wpf.Installer\bin\Release\Atomix.Wallet.msi
