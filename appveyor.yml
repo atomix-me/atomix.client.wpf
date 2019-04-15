@@ -13,7 +13,7 @@ clone_script:
   - cmd: git checkout -qf %APPVEYOR_REPO_COMMIT%
 
 before_build:
-  - PowerShell .\install_self_signed_cert.ps1
+  - PowerShell .\InstallSelfSignedCert.ps1
 
 build_script:
   - dotnet restore
