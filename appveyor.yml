@@ -22,7 +22,7 @@ build_script:
   - msbuild .\Atomix.Client.Wpf.Installer\Atomix.Client.Wpf.Installer.wixproj /p:Configuration="Release" /clp:ErrorsOnly'
 
 after_build:
-  - ps: Set-AuthenticodeSignature -FilePath .\Atomix.Client.Wpf.Installer\bin\Release\Atomix.Wallet.msi -Certificate @(gci Cert:\LocalMachine\My -DnsName atomix.me -codesigning)[0]
+  - ps: Set-AuthenticodeSignature -FilePath .\Atomix.Client.Wpf.Installer\bin\Release\Atomix.Wallet.msi -Certificate @(gci Cert:\LocalMachine\My -DnsName atomix.me -codesigning)[0] -Verbose
 
 artifacts:
   - path: .\Atomix.Client.Wpf.Installer\bin\Release\Atomix.Wallet.msi
