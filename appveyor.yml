@@ -13,7 +13,7 @@ clone_script:
   - cmd: git checkout -qf %APPVEYOR_REPO_COMMIT%
 
 before_build:
-  - PowerShell .\InstallSelfSignedCert.ps1
+  - ps: .\InstallSelfSignedCert.ps1
 
 build_script:
   - dotnet restore
@@ -21,7 +21,7 @@ build_script:
   - msbuild /p:Configuration="Release"  /clp:ErrorsOnly'
   - msbuild .\Atomix.Client.Wpf.Installer\Atomix.Client.Wpf.Installer.wixproj /p:Configuration="Release" /clp:ErrorsOnly'
 
-after_build:
+before_deploy:
   - ps: Set-AuthenticodeSignature -FilePath .\Atomix.Client.Wpf.Installer\bin\Release\Atomix.Wallet.msi -Certificate @(gci Cert:\LocalMachine\Root -DnsName "atomix.me" -codesigning)[0]
 
 artifacts:
